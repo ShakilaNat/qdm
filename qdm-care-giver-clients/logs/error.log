@@ -1,0 +1,46 @@
+2020-08-28 11:27:35 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8445 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8445 or configure this application to listen on another port.
+
+2020-08-28 11:40:39 [http-nio-8445-exec-10] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - HikariPool-3 - Connection is not available, request timed out after 30703ms.
+2020-08-28 11:40:39 [http-nio-8445-exec-10] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - This connection has been closed.
+2020-08-28 11:52:01 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8445 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8445 or configure this application to listen on another port.
+
+2020-08-28 11:57:39 [http-nio-8445-exec-8] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - HikariPool-4 - Connection is not available, request timed out after 30803ms.
+2020-08-28 11:57:39 [http-nio-8445-exec-8] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - This connection has been closed.
+2020-08-28 12:05:26 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8445 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8445 or configure this application to listen on another port.
+
