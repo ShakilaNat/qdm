@@ -89,12 +89,14 @@ public class ManageClientService {
 	}
 
 	public ResponseInfo getIssueDetail(long issueId) {
-
 		Issues isssue = issuesRepository.findById(issueId)
 				.orElseThrow(() -> new NoIssueFoundException(issueId + " Issue ID not found."));
+		Long id=isssue.getClientId();
 
-		ClientDetails clientDetails = clientDetailsRepository.findById((int)isssue.getClientId())
+		ClientDetails clientDetails = clientDetailsRepository.findById(id.intValue())
 				.orElseThrow(() -> new NoIssueFoundException("No ID found"));
+
+//		System.out.println("check"+clientDetails.toString());
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 				.path("/clients/downloadFile/" + clientDetails.getUploadPhoto().getId()).toUriString();
 
@@ -226,11 +228,19 @@ public class ManageClientService {
 				.orElseThrow(() -> new NoIssueFoundException("No ID found"));
 
 		ClientInfoDto clientInfo = modelMapper.map(clientDetails, ClientInfoDto.class);
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+				.path("/clients/downloadFile/" + clientDetails.getUploadPhoto().getId()).toUriString();
+		clientInfo.setClient_name(clientDetails.getName());
+		clientInfo.setGender(clientDetails.getGender().name());
+		clientInfo.setMobile_no(String.valueOf(clientDetails.getMobilenumber()));
+		clientInfo.setProfile_pic(fileDownloadUri);
 		Activity activity = activityRepository.findById(activityId)
 				.orElseThrow(() -> new NoIssueFoundException("No ID found"));
 
 		ClientActivitySummaryDto clientSummary = modelMapper.map(activity, ClientActivitySummaryDto.class);
+		clientSummary.setClient_name(clientDetails.getName());
 		clientSummary.setClient_info(clientInfo);
+		
 		return ResponseInfo.builder().status("Success").status_code(200).message("").data(clientSummary).build();
 
 	}

@@ -53,7 +53,7 @@ public class ClientDetails {
 	long mobilenumber;
 	String address;
 	String occupation;
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "uploadPhotoid")
 	UploadProfile uploadPhoto;
 	int age;

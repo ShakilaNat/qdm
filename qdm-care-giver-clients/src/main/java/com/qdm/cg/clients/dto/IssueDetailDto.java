@@ -20,4 +20,8 @@ public class IssueDetailDto {
 	private String issue_description;
 	private String profile_pic;
 	private String client_phone_no;
+	private String issue_status;
+	private String latitude;
+	private String longitude;
+	
 }

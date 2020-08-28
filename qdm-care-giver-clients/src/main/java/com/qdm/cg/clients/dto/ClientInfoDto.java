@@ -17,5 +17,8 @@ public class ClientInfoDto {
 	private String mobile_no;
 	private String latitude;
 	private String longitude;
+	private int id;
+	private String profile_pic;
+	private String address;
 
 }
