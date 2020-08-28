@@ -184,7 +184,8 @@ public class CareGiverController {
 				careProviderCategoryList.add(new LabelValuePair(1002, "Physiotheraphy"));
 				
 				List<CareProviderList> careProviderList=new ArrayList<CareProviderList>();
-				careProviderList.add(new CareProviderList(1, "CareProvider1",careProviderCategoryList));
+				careProviderList.add(new CareProviderList(1, "Carehub",careProviderCategoryList));
+				
 				
 				careGiverRecord.put("mobile_no_isd_code", careGiverList.getMobileNoISDCode());
 				careGiverRecord.put("mobile_no", careGiverList.getMobileNo());
