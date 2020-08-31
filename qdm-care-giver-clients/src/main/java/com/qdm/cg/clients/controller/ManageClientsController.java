@@ -30,15 +30,17 @@ public class ManageClientsController {
 	ManageClientService manageClientService;
 
 	@GetMapping("/reports/get")
-	public ResponseEntity<?> getReports(@RequestParam long clientId) {
+	public ResponseEntity<?> getReports(@RequestParam long clientId, @RequestParam(defaultValue = "0") Integer pageNo,
+			@RequestParam(defaultValue = "10") Integer pageSize) {
 		log.info("Reports for Client ID " + clientId);
-		ResponseInfo responseinfo = manageClientService.getClientReport(clientId);
+		ResponseInfo responseinfo = manageClientService.getClientReport(clientId, pageNo, pageSize);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
 
 	@GetMapping("/issues/list/get")
-	public ResponseEntity<?> getIssuesList(@RequestParam long clientId) {
-		ResponseInfo responseinfo = manageClientService.getIssueList(clientId);
+	public ResponseEntity<?> getIssuesList(@RequestParam long clientId,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+		ResponseInfo responseinfo = manageClientService.getIssueList(clientId, pageNo, pageSize);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
 
@@ -50,19 +52,21 @@ public class ManageClientsController {
 
 	@PutMapping("/issues/status/modify")
 	public ResponseEntity<?> getDetailsList(@RequestBody IssueStatus issueStatus) {
-		ResponseInfo responseinfo =manageClientService.modifyIssueStatus(issueStatus);
+		ResponseInfo responseinfo = manageClientService.modifyIssueStatus(issueStatus);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
 
 	@GetMapping("/recommendations/details/get")
-	public ResponseEntity<?> getRecommendationsDetailsList(@RequestParam long clientId) {
-		ResponseInfo responseinfo = manageClientService.getRecommendations(clientId);
+	public ResponseEntity<?> getRecommendationsDetailsList(@RequestParam long clientId,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+		ResponseInfo responseinfo = manageClientService.getRecommendations(clientId, pageNo, pageSize);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
 
 	@GetMapping("/recommendations/products/list/get")
-	public ResponseEntity<?> getRecommendationsProductsList(@RequestParam long clientId) {
-		ResponseInfo responseinfo = manageClientService.getRecommendedProductList(clientId);
+	public ResponseEntity<?> getRecommendationsProductsList(@RequestParam long clientId,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+		ResponseInfo responseinfo = manageClientService.getRecommendedProductList(clientId, pageNo, pageSize);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
 
@@ -79,17 +83,18 @@ public class ManageClientsController {
 	}
 
 	@GetMapping("/activities/summary/get")
-	public ResponseEntity<?> getActivitySummary(@RequestParam long activityId,@RequestParam long clientId) {
-		ResponseInfo responseinfo = manageClientService.getActivitySummary(activityId,clientId);
+	public ResponseEntity<?> getActivitySummary(@RequestParam long activityId) {
+		ResponseInfo responseinfo = manageClientService.getActivitySummary(activityId);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
 
 	@GetMapping("/activities/get")
-	public ResponseEntity<?> getActivity(@RequestParam long clientId, @RequestParam(required = false) String event) {
-		ResponseInfo responseinfo = manageClientService.getClientActivity(event,clientId);
+	public ResponseEntity<?> getActivity(@RequestParam long clientId, @RequestParam(required = false) String event,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+		ResponseInfo responseinfo = manageClientService.getClientActivity(event, clientId, pageNo, pageSize);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/add/product")
 	public void addProduct(@RequestBody Product product) {
 		manageClientService.addProduct(product);
@@ -109,9 +114,10 @@ public class ManageClientsController {
 	public void addReports(@RequestBody Reports reports) {
 		manageClientService.addReports(reports);
 	}
+
 	@PostMapping("/add/activity")
 	public void addActivity(@RequestBody Activity activity) {
 		manageClientService.addActivity(activity);
 	}
-	
+
 }

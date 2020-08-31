@@ -14,6 +14,7 @@ public class IssueDetailDto {
 	private String issue_title;
 	private String issue_id;
 	private String issue_type;
+	private String issue_tag;
 	private String issued_product;
 	private String issued_client_name;
 	private String issued_time;

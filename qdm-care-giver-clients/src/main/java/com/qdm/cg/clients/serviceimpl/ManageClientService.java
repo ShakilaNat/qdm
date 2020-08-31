@@ -6,18 +6,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qdm.cg.clients.dto.ClientActivityDto;
@@ -45,7 +41,6 @@ import com.qdm.cg.clients.entity.Equipment;
 import com.qdm.cg.clients.entity.Issues;
 import com.qdm.cg.clients.entity.Product;
 import com.qdm.cg.clients.entity.Reports;
-import com.qdm.cg.clients.entity.UploadProfile;
 import com.qdm.cg.clients.enums.ManageClientsConstants;
 import com.qdm.cg.clients.enums.StatusEnum;
 import com.qdm.cg.clients.exceptionhandler.NoIssueFoundException;
@@ -56,6 +51,8 @@ import com.qdm.cg.clients.repository.IssuesRepository;
 import com.qdm.cg.clients.repository.ProductRepository;
 import com.qdm.cg.clients.repository.ReportsRepository;
 import com.qdm.cg.clients.response.ResponseInfo;
+
+import lombok.extern.java.Log;
 
 @Service
 public class ManageClientService {
@@ -76,10 +73,11 @@ public class ManageClientService {
 	@Autowired
 	ClientDetailsRepository clientDetailsRepository;
 
-	public ResponseInfo getClientReport(long clientId) {
-
+	public ResponseInfo getClientReport(long clientId, Integer pageNo, Integer pageSize) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
 		List<ReportsDto> reportsList = new ArrayList<ReportsDto>();
-		List<Reports> entityList = reportsRepository.findByClientId(clientId);
+		Page<Reports> pagedResult = reportsRepository.findByClientId(clientId, paging);
+		List<Reports> entityList = pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<Reports>();
 		for (Reports entity : entityList) {
 			reportsList.add(modelMapper.map(entity, ReportsDto.class));
 		}
@@ -91,24 +89,25 @@ public class ManageClientService {
 	public ResponseInfo getIssueDetail(long issueId) {
 		Issues isssue = issuesRepository.findById(issueId)
 				.orElseThrow(() -> new NoIssueFoundException(issueId + " Issue ID not found."));
-		Long id=isssue.getClientId();
+		Long id = isssue.getClientId();
 
 		ClientDetails clientDetails = clientDetailsRepository.findById(id.intValue())
 				.orElseThrow(() -> new NoIssueFoundException("No ID found"));
 
-//		System.out.println("check"+clientDetails.toString());
+		// System.out.println("check"+clientDetails.toString());
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 				.path("/clients/downloadFile/" + clientDetails.getUploadPhoto().getId()).toUriString();
 
-		IssueDetailDto issueDetails=modelMapper.map(isssue, IssueDetailDto.class);
+		IssueDetailDto issueDetails = modelMapper.map(isssue, IssueDetailDto.class);
 		issueDetails.setProfile_pic(fileDownloadUri);
-		return ResponseInfo.builder().status("Success").status_code(200).message("")
-				.data(issueDetails).build();
+		return ResponseInfo.builder().status("Success").status_code(200).message("").data(issueDetails).build();
 	}
 
-	public ResponseInfo getIssueList(long clientId) {
+	public ResponseInfo getIssueList(long clientId, Integer pageNo, Integer pageSize) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
 		int openCount = 0, resolvedCount = 0, pendingCount = 0;
-		List<Issues> issueList = issuesRepository.findByClientId(clientId);
+		Page<Issues> pagedResult = issuesRepository.findByClientId(clientId, paging);
+		List<Issues> issueList = pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<Issues>();
 		List<IssueDto> issuedto = new ArrayList<>();
 		for (Issues entity : issueList) {
 			issuedto.add(modelMapper.map(entity, IssueDto.class));
@@ -141,13 +140,16 @@ public class ManageClientService {
 
 	}
 
-	public ResponseInfo getRecommendations(long clientId) {
-		List<Equipment> equipments = equipmentRepository.findByClientId(clientId);
+	public ResponseInfo getRecommendations(long clientId, Integer pageNo, Integer pageSize) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+		Page<Equipment> pagedResult = equipmentRepository.findByClientId(clientId, paging);
+		List<Equipment> equipments = pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<Equipment>();
 		List<EquipmentDto> equipmentList = new ArrayList<EquipmentDto>();
 		for (Equipment equipment : equipments) {
 			equipmentList.add(modelMapper.map(equipment, EquipmentDto.class));
 		}
-		List<Product> products = productRepository.findByClientId(clientId);
+		Page<Product> pagedProdResult = productRepository.findByClientId(clientId, paging);
+		List<Product> products = pagedProdResult.hasContent() ? pagedProdResult.getContent() : new ArrayList<Product>();
 		List<ProductsDto> productList = new ArrayList<ProductsDto>();
 		for (Product product : products) {
 			productList.add(modelMapper.map(product, ProductsDto.class));
@@ -168,8 +170,11 @@ public class ManageClientService {
 
 	}
 
-	public ResponseInfo getRecommendedProductList(long clientId) {
-		List<Product> products = productRepository.findByClientId(clientId);
+	public ResponseInfo getRecommendedProductList(long clientId, Integer pageNo, Integer pageSize) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+
+		Page<Product> pagedProdResult = productRepository.findByClientId(clientId, paging);
+		List<Product> products = pagedProdResult.hasContent() ? pagedProdResult.getContent() : new ArrayList<Product>();
 		List<RecommendedProductsDto> recommendedProductList = new ArrayList<RecommendedProductsDto>();
 		for (Product product : products) {
 			recommendedProductList.add(modelMapper.map(product, RecommendedProductsDto.class));
@@ -179,9 +184,11 @@ public class ManageClientService {
 				.build();
 	}
 
-	public ResponseInfo getClientActivity(String event, long clientId) {
-
-		List<Activity> activityList = activityRepository.findByClientId(clientId);
+	public ResponseInfo getClientActivity(String event, long clientId, Integer pageNo, Integer pageSize) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+		Page<Activity> pagedResult = activityRepository.findByClientId(clientId, paging);
+		List<Activity> activityList = pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<Activity>();
+		;
 		List<ClientActivityDto> activityDtoList = new ArrayList<ClientActivityDto>();
 		for (Activity activity : activityList) {
 			activityDtoList.add(modelMapper.map(activity, ClientActivityDto.class));
@@ -193,9 +200,10 @@ public class ManageClientService {
 		}
 		List<ClientActivityDto> pastActivityList = new ArrayList<ClientActivityDto>();
 		List<ClientActivityDto> upcomingActivityList = new ArrayList<ClientActivityDto>();
-		String date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
-		SimpleDateFormat sdfo = new SimpleDateFormat("yyyy-MM-dd");
+		String date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
+		SimpleDateFormat sdfo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+	
 		for (ClientActivityDto activity : activityDtoList) {
 			try {
 				Date d1 = sdfo.parse(date);
@@ -222,9 +230,12 @@ public class ManageClientService {
 		return null;
 
 	}
-	public ResponseInfo getActivitySummary(long activityId, Long clientId) {
 
-		ClientDetails clientDetails = clientDetailsRepository.findById(clientId.intValue())
+	public ResponseInfo getActivitySummary(long activityId) {
+		Activity activity = activityRepository.findById(activityId)
+				.orElseThrow(() -> new NoIssueFoundException("No ID found"));
+
+		ClientDetails clientDetails = clientDetailsRepository.findById((int) activity.getClientId())
 				.orElseThrow(() -> new NoIssueFoundException("No ID found"));
 
 		ClientInfoDto clientInfo = modelMapper.map(clientDetails, ClientInfoDto.class);
@@ -234,20 +245,17 @@ public class ManageClientService {
 		clientInfo.setGender(clientDetails.getGender().name());
 		clientInfo.setMobile_no(String.valueOf(clientDetails.getMobilenumber()));
 		clientInfo.setProfile_pic(fileDownloadUri);
-		Activity activity = activityRepository.findById(activityId)
-				.orElseThrow(() -> new NoIssueFoundException("No ID found"));
 
 		ClientActivitySummaryDto clientSummary = modelMapper.map(activity, ClientActivitySummaryDto.class);
 		clientSummary.setClient_name(clientDetails.getName());
 		clientSummary.setClient_info(clientInfo);
-		
+
 		return ResponseInfo.builder().status("Success").status_code(200).message("").data(clientSummary).build();
 
 	}
 
 	// done
 
-	
 	public ResponseInfo getRecommendedProductTrack() {
 		RecommendationsTrackResponse response = new RecommendationsTrackResponse();
 		List<TimeLine> timeLine = new ArrayList<TimeLine>();
@@ -284,6 +292,5 @@ public class ManageClientService {
 	public void addActivity(Activity activity) {
 		activityRepository.save(activity);
 	}
-
 
 }
