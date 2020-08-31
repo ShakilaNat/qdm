@@ -31,6 +31,6 @@ public class Product {
 	private String current_status_date;
 	private String product_image;
 	private String product_price;
-	
+	private String offer;
 	
 }

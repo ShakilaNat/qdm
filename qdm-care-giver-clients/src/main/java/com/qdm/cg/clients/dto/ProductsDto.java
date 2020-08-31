@@ -13,4 +13,6 @@ public class ProductsDto {
 	 private String product_name;
      private String product_desc;
      private String product_code;
+     private String product_price;
+     private String offer;
 }
