@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -51,8 +49,6 @@ import com.qdm.cg.clients.repository.IssuesRepository;
 import com.qdm.cg.clients.repository.ProductRepository;
 import com.qdm.cg.clients.repository.ReportsRepository;
 import com.qdm.cg.clients.response.ResponseInfo;
-
-import lombok.extern.java.Log;
 
 @Service
 public class ManageClientService {
@@ -114,11 +110,11 @@ public class ManageClientService {
 		}
 		for (IssueDto dto : issuedto) {
 
-			if (dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.open_status)) {
+			if (null!=dto.getIssue_status()&&dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.open_status)) {
 				openCount++;
-			} else if (dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.resolved_status)) {
+			} else if (null!=dto.getIssue_status()&&dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.resolved_status)) {
 				resolvedCount++;
-			} else if (dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.pending_status)) {
+			} else if (null!=dto.getIssue_status()&&dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.pending_status)) {
 				pendingCount++;
 			}
 		}
@@ -267,7 +263,8 @@ public class ManageClientService {
 		response.setProduct_id(1);
 		response.setProduct_name("Zerostat spacer");
 		response.setProduct_price("MYR 432");
-		response.setCurrent_status("Recommended on July 04");
+		response.setCurrent_status("Recommended");
+		response.setCurrent_status_date("July 04");
 		response.setTimeline(timeLine);
 		return ResponseInfo.builder().status("Success").status_code(200).message("").data(response).build();
 

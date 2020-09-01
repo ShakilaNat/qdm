@@ -16,5 +16,6 @@ public class RecommendationsTrackResponse {
 	private long product_id;
 	private String product_price;
 	private String current_status;
+	private String current_status_date;
 	private List<TimeLine> timeline;
 }
