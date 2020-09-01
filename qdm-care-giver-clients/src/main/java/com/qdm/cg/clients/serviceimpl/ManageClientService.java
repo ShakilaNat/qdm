@@ -110,11 +110,14 @@ public class ManageClientService {
 		}
 		for (IssueDto dto : issuedto) {
 
-			if (null!=dto.getIssue_status()&&dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.open_status)) {
+			if (null != dto.getIssue_status()
+					&& dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.open_status)) {
 				openCount++;
-			} else if (null!=dto.getIssue_status()&&dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.resolved_status)) {
+			} else if (null != dto.getIssue_status()
+					&& dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.resolved_status)) {
 				resolvedCount++;
-			} else if (null!=dto.getIssue_status()&&dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.pending_status)) {
+			} else if (null != dto.getIssue_status()
+					&& dto.getIssue_status().equalsIgnoreCase(ManageClientsConstants.pending_status)) {
 				pendingCount++;
 			}
 		}
@@ -199,7 +202,6 @@ public class ManageClientService {
 		String date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
 		SimpleDateFormat sdfo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-	
 		for (ClientActivityDto activity : activityDtoList) {
 			try {
 				Date d1 = sdfo.parse(date);
@@ -252,19 +254,18 @@ public class ManageClientService {
 
 	// done
 
-	public ResponseInfo getRecommendedProductTrack() {
+	public ResponseInfo getRecommendedProductTrack(long productId) {
 		RecommendationsTrackResponse response = new RecommendationsTrackResponse();
+		Product product = productRepository.findById(productId)
+				.orElseThrow(() -> new NoIssueFoundException("Product ID not found"));
+
+		response = modelMapper.map(product, RecommendationsTrackResponse.class);
 		List<TimeLine> timeLine = new ArrayList<TimeLine>();
-		timeLine.add(new TimeLine("Recommended", "24-08-2020", true));
-		timeLine.add(new TimeLine("Consent Received", "24-08-2020", true));
-		timeLine.add(new TimeLine("Purchased", "24-08-2020", true));
-		timeLine.add(new TimeLine("Delivered", "24-08-2020", false));
-		timeLine.add(new TimeLine("Demoed", "24-08-2020", false));
-		response.setProduct_id(1);
-		response.setProduct_name("Zerostat spacer");
-		response.setProduct_price("MYR 432");
-		response.setCurrent_status("Recommended");
-		response.setCurrent_status_date("July 04");
+		timeLine.add(new TimeLine("Recommended", "2020-08-26T05:27:51Z", true));
+		timeLine.add(new TimeLine("Consent Received", "2020-08-27T05:27:51Z", true));
+		timeLine.add(new TimeLine("Purchased", "2020-08-28T05:27:51Z", true));
+		timeLine.add(new TimeLine("Delivered", "2020-08-29T05:27:51Z", false));
+		timeLine.add(new TimeLine("Demoed", "2020-08-31T05:27:51Z", false));
 		response.setTimeline(timeLine);
 		return ResponseInfo.builder().status("Success").status_code(200).message("").data(response).build();
 

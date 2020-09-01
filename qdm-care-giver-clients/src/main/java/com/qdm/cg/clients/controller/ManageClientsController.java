@@ -71,8 +71,8 @@ public class ManageClientsController {
 	}
 
 	@GetMapping("/recommendations/products/track/get")
-	public ResponseEntity<?> getRecommendationsProductsTrack(@RequestParam String clientId) {
-		ResponseInfo responseinfo = manageClientService.getRecommendedProductTrack();
+	public ResponseEntity<?> getRecommendationsProductsTrack(@RequestParam String clientId,@RequestParam long productId) {
+		ResponseInfo responseinfo = manageClientService.getRecommendedProductTrack(productId);
 		return new ResponseEntity<Object>(responseinfo, HttpStatus.OK);
 	}
 
